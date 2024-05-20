@@ -1,4 +1,6 @@
+import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
+import config from '../../config';
 import { IName, IUser, IUserModel } from './user.interface';
 
 const nameSchema = new Schema<IName>({
@@ -21,6 +23,7 @@ const userSchema = new Schema<IUser, IUserModel>(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     address: {
       type: String,
@@ -50,6 +53,37 @@ const userSchema = new Schema<IUser, IUserModel>(
   },
 );
 
-const User = model('User', userSchema);
+// Custom hooks
+
+// Modified password fields before save to database
+userSchema.pre('save', async function (next) {
+  try {
+    // Check if the password is modified or this is a new user
+    if (!this.isModified('password') || this.isNew) {
+      const hashPassword = await bcrypt.hash(
+        this.password,
+        Number(config.bcrypt_salt),
+      );
+      this.password = hashPassword;
+    }
+    next();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    next(error);
+  }
+});
+
+// Check that the user exists to database
+userSchema.statics.isUserExists = async function (email: string) {
+  const result = await User.findOne({ email });
+  return result;
+};
+
+// Check the password is correct
+userSchema.methods.isPasswordCorrect = async function (password: string) {
+  return await bcrypt.compare(password, this.password);
+};
+
+const User = model<IUser, IUserModel>('User', userSchema);
 
 export default User;
