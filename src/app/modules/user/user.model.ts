@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
-import { IName, IUser, IUserModel } from './user.interface';
+import { IName, IUser, IUserMethods, IUserModel } from './user.interface';
 
 const nameSchema = new Schema<IName>({
   firstName: {
@@ -14,7 +14,7 @@ const nameSchema = new Schema<IName>({
   },
 });
 
-const userSchema = new Schema<IUser, IUserModel>(
+const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
   {
     name: {
       type: nameSchema,
