@@ -34,14 +34,26 @@ const loginUser = async (email: string, password: string) => {
     throw new ApiError(401, 'Invalid credentials');
   }
 
-  return user;
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
+
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  const userResponse = await User.findById(user.id).select(
+    '-password -refreshToken -__v',
+  );
+
+  return { user: userResponse, accessToken, refreshToken };
 };
 
 // Logout the user
 const logoutUser = async (userId: string) => {
   await User.findByIdAndUpdate(userId, {
-    refreshToken: null,
-    lastLogout: Date.now(),
+    $set: {
+      refreshToken: null,
+      lastLogout: Date.now(),
+    },
   });
 };
 

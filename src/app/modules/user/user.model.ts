@@ -66,7 +66,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
 userSchema.pre('save', async function (next) {
   try {
     // Check if the password is modified or this is a new user
-    if (!this.isModified('password') || this.isNew) {
+    if (this.isModified('password') || this.isNew) {
       const hashPassword = await bcrypt.hash(
         this.password,
         Number(config.bcrypt_salt),

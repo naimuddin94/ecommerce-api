@@ -8,8 +8,8 @@ export interface IName extends z.infer<typeof nameValidationSchema> {}
 
 export interface IUserMethods {
   isPasswordCorrect(password: string): Promise<boolean>;
-  //   generateAccessToken(): string;
-  //   generateRefreshToken(): string;
+  generateAccessToken(): string;
+  generateRefreshToken(): string;
 }
 
 export interface IUserModel
