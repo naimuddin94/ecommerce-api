@@ -56,8 +56,38 @@ const allProducts = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, result, 'Product fetched successfully!'));
 });
 
+// Update product with id and updated data
+const updateProduct = asyncHandler(async (req: Request, res: Response) => {
+  const { productId } = req.params;
+
+  const updateData = req.body;
+
+  const { error, data } = productValidationSchema
+    .partial()
+    .safeParse(updateData);
+
+  if (error) {
+    throw new ApiError(
+      400,
+      error.issues.map((err) => err.message).join(' and '),
+      error.issues,
+    );
+  }
+
+  const result = await productService.updateProductToDB(productId, data);
+
+  if (!result) {
+    throw new ApiError(500, 'Something went wrong while updating product');
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Product updated successfully!'));
+});
+
 export const productController = {
   createProduct,
   singleProduct,
   allProducts,
+  updateProduct,
 };
