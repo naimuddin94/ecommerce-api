@@ -45,7 +45,24 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     );
 });
 
+// Logout user and remove tokens
+const logout = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(400, 'Invalid user');
+  }
+  await userService.logoutUser(userId);
+
+  return res
+    .status(200)
+    .clearCookie('accessToken', options)
+    .clearCookie('refreshToken', options)
+    .json(new ApiResponse(200, {}, 'Logout successfully'));
+});
+
 export const userController = {
   createUser,
   login,
+  logout,
 };

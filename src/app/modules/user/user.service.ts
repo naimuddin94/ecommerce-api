@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { ApiError } from '../../../utils';
 import { IUser } from './user.interface';
 import User from './user.model';
@@ -48,13 +49,14 @@ const loginUser = async (email: string, password: string) => {
 };
 
 // Logout the user
-const logoutUser = async (userId: string) => {
-  await User.findByIdAndUpdate(userId, {
+const logoutUser = async (userId: mongoose.Types.ObjectId) => {
+  const result = await User.findByIdAndUpdate(userId, {
     $set: {
       refreshToken: null,
       lastLogout: Date.now(),
     },
   });
+  console.log(58, result);
 };
 
 export const userService = {

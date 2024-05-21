@@ -6,6 +6,7 @@
  *
  */
 
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import { userRouter } from './app/modules/user/user.route';
@@ -15,6 +16,7 @@ const app: Application = express();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 
 // Testing route
