@@ -16,8 +16,21 @@ const fetchSingleProductFromDB = async (productId: string) => {
 };
 
 // Fetched all products from the database
-const fetchAllProductFromDB = async () => {
-  return await Product.find({});
+const fetchAllProductFromDB = async (searchTerm?: string) => {
+  let query = {};
+
+  // If searchTerm is provided, build the query with regex
+  if (searchTerm) {
+    query = {
+      $or: [
+        { title: { $regex: searchTerm, $options: 'i' } },
+        { description: { $regex: searchTerm, $options: 'i' } },
+        { category: { $regex: searchTerm, $options: 'i' } },
+      ],
+    };
+  }
+
+  return await Product.find(query);
 };
 
 export const productService = {

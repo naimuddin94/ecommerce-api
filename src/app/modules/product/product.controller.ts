@@ -39,7 +39,11 @@ const singleProduct = asyncHandler(async (req: Request, res: Response) => {
 
 // Fetch all products from the database
 const allProducts = asyncHandler(async (req: Request, res: Response) => {
-  const result = await productService.fetchAllProductFromDB();
+  const { searchTerm } = req.query;
+
+  const result = await productService.fetchAllProductFromDB(
+    searchTerm as string,
+  );
 
   if (!result.length) {
     return res
