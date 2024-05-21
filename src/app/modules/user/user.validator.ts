@@ -28,6 +28,7 @@ export const userValidationSchema = z.object({
     .string({ message: 'Contact is required' })
     .trim()
     .max(11, { message: 'Please enter a valid mobile number without +88' }),
+  refreshToken: z.optional(z.string()),
   lastLogin: z.optional(
     z.date({ message: 'Last login is must be date format' }),
   ),

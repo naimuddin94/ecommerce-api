@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
 import { IName, IUser, IUserMethods, IUserModel } from './user.interface';
@@ -43,6 +44,9 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     lastLogout: {
       type: Date,
     },
+    refreshToken: {
+      type: String,
+    },
     isVerified: {
       type: Boolean,
       default: true,
@@ -82,6 +86,34 @@ userSchema.statics.isUserExists = async function (email: string) {
 // Check the password is correct
 userSchema.methods.isPasswordCorrect = async function (password: string) {
   return await bcrypt.compare(password, this.password);
+};
+
+// Custom method for generating access token
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      fullName: this.name.firstName + ' ' + this.name.lastName,
+    },
+    config.access_token_secret!,
+    {
+      expiresIn: config.access_token_expiry,
+    },
+  );
+};
+
+// Custom method for generating refresh token
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      id: this.id,
+    },
+    config.refresh_token_secret!,
+    {
+      expiresIn: config.refresh_token_expiry,
+    },
+  );
 };
 
 const User = model<IUser, IUserModel>('User', userSchema);
