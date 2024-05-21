@@ -1,5 +1,12 @@
 import { Schema, model } from 'mongoose';
-import { IInventory, IProduct, IVariant } from './product.interface';
+import { ApiError } from '../../../utils';
+import {
+  IInventory,
+  IProduct,
+  IProductMethods,
+  IProductModel,
+  IVariant,
+} from './product.interface';
 
 const variantSchema = new Schema<IVariant>(
   {
@@ -25,10 +32,6 @@ const inventorySchema = new Schema<IInventory>(
     },
     inStock: {
       type: Boolean,
-      // eslint-disable-next-line no-unused-vars
-      set: function (this: IInventory) {
-        return this.quantity > 0;
-      },
     },
   },
   {
@@ -36,11 +39,12 @@ const inventorySchema = new Schema<IInventory>(
   },
 );
 
-const productSchema = new Schema<IProduct>(
+const productSchema = new Schema<IProduct, IProductModel, IProductMethods>(
   {
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     description: {
       type: String,
@@ -76,6 +80,36 @@ const productSchema = new Schema<IProduct>(
   },
 );
 
-const Product = model<IProduct>('Product', productSchema);
+// This function runs before saving the product document
+productSchema.pre('save', function (next) {
+  if (this.isModified('inventory') || this.isNew) {
+    this.inventory.inStock = this.inventory.quantity > 0;
+  }
+  next();
+});
+
+// Check that the product name exists to database
+productSchema.statics.isProductNameExists = async function (name: string) {
+  const result = await Product.findOne({ name });
+  return result;
+};
+
+// Increment quantity
+productSchema.methods.incrementQuantity = function (quantity: number) {
+  this.inventory.quantity += quantity;
+};
+
+// Decrement quantity
+productSchema.methods.decrementQuantity = function (quantity: number) {
+  if (this.inventory.quantity < quantity) {
+    throw new ApiError(400, 'Insufficient quantity');
+  }
+  this.inventory.quantity -= quantity;
+};
+
+// Define text index on title, description, and category fields
+productSchema.index({ title: 'text', description: 'text', category: 'text' });
+
+const Product = model<IProduct, IProductModel>('Product', productSchema);
 
 export default Product;
