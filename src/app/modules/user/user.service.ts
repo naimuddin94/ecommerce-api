@@ -12,12 +12,12 @@ const savedUserToDB = async (userData: IUser) => {
 };
 
 // Fetched all users from the database
-const fetchedUsersToDB = async () => {
+const fetchAllUsersToDB = async () => {
   return await User.find({}).select('-password');
 };
 
 // Fetched single user from the database
-const fetchedSingleUserToDB = async (id: string) => {
+const fetchSingleUserToDB = async (id: string) => {
   return await User.findById(id).select('-password');
 };
 
@@ -60,8 +60,8 @@ const logoutUser = async (userId: mongoose.Types.ObjectId) => {
 
 export const userService = {
   savedUserToDB,
-  fetchedUsersToDB,
-  fetchedSingleUserToDB,
+  fetchAllUsersToDB,
+  fetchSingleUserToDB,
   loginUser,
   logoutUser,
 };
