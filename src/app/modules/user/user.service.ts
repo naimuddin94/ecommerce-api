@@ -50,13 +50,12 @@ const loginUser = async (email: string, password: string) => {
 
 // Logout the user
 const logoutUser = async (userId: mongoose.Types.ObjectId) => {
-  const result = await User.findByIdAndUpdate(userId, {
+  await User.findByIdAndUpdate(userId, {
     $set: {
       refreshToken: null,
       lastLogout: Date.now(),
     },
   });
-  console.log(58, result);
 };
 
 export const userService = {
