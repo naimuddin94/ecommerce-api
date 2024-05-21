@@ -33,8 +33,25 @@ const fetchAllProductFromDB = async (searchTerm?: string) => {
   return await Product.find(query);
 };
 
+// Update product by id
+const updateProductToDB = async (
+  id: string,
+  updateProductData: Partial<IProduct>,
+) => {
+  if (
+    updateProductData.inventory &&
+    typeof updateProductData.inventory.quantity !== 'undefined'
+  ) {
+    updateProductData.inventory.inStock =
+      updateProductData.inventory.quantity > 0;
+  }
+
+  return await Product.findByIdAndUpdate(id, updateProductData, { new: true });
+};
+
 export const productService = {
   saveProductToDB,
   fetchSingleProductFromDB,
   fetchAllProductFromDB,
+  updateProductToDB,
 };
