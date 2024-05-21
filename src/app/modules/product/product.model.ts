@@ -32,6 +32,7 @@ const inventorySchema = new Schema<IInventory>(
     },
     inStock: {
       type: Boolean,
+      required: true,
     },
   },
   {
