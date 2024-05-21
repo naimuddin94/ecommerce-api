@@ -4,16 +4,19 @@ import { Schema, model } from 'mongoose';
 import config from '../../config';
 import { IName, IUser, IUserMethods, IUserModel } from './user.interface';
 
-const nameSchema = new Schema<IName>({
-  firstName: {
-    type: String,
-    required: true,
+const nameSchema = new Schema<IName>(
+  {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
   },
-  lastName: {
-    type: String,
-    required: true,
-  },
-});
+  { _id: false },
+);
 
 const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
   {

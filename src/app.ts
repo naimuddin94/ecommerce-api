@@ -8,26 +8,30 @@
 
 import cors from 'cors';
 import express, { Application, NextFunction, Request, Response } from 'express';
+import { userRouter } from './app/modules/user/user.route';
 import globalErrorHandler from './lib/globalErrorHandler';
 
 const app: Application = express();
 
-// middleware
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-// testing route
+// Testing route
 app.get('/', (req: Request, res: Response) => {
   res.send('server is running 🚀');
 });
 
-// not found error handler
+// Application routes
+app.use('/api/users', userRouter);
+
+// Not-Found routes error handler
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   const error = new Error(`can't find ${req.originalUrl} on the server`);
   next(error);
 });
 
-// global error handler
+// Global error handler
 app.use(globalErrorHandler);
 
 export default app;
