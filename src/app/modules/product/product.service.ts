@@ -23,7 +23,7 @@ const fetchAllProductFromDB = async (searchTerm?: string) => {
   if (searchTerm) {
     query = {
       $or: [
-        { title: { $regex: searchTerm, $options: 'i' } },
+        { name: { $regex: searchTerm, $options: 'i' } },
         { description: { $regex: searchTerm, $options: 'i' } },
         { category: { $regex: searchTerm, $options: 'i' } },
       ],
@@ -56,7 +56,7 @@ const deleteProductFromDB = async (id: string) => {
   if (!product) {
     throw new ApiError(404, 'Invalid product id');
   }
-  
+
   return await Product.findByIdAndDelete(id);
 };
 
