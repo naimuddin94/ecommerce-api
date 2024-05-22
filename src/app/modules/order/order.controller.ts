@@ -29,6 +29,10 @@ const fetchAllOrders = asyncHandler(async (req: Request, res: Response) => {
   const { email } = req.query;
   const result = await orderService.fetchOrdersFromDB(email as string);
 
+  if (!result.length) {
+    throw new ApiError(404, 'Order not found');
+  }
+
   return res
     .status(200)
     .json(new ApiResponse(200, result, 'Orders fetched successfully!'));
