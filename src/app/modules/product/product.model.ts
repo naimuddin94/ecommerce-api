@@ -95,6 +95,7 @@ productSchema.statics.isProductNameExists = async function (name: string) {
   return result;
 };
 
+
 // Increment quantity
 productSchema.methods.incrementQuantity = function (quantity: number) {
   this.inventory.quantity += quantity;
