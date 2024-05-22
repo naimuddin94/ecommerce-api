@@ -8,6 +8,8 @@ const orderSchema = new Schema<IOrder>(
       required: true,
     },
     productId: {
+      // type: mongoose.Types.ObjectId,
+      // ref: 'Product',
       type: String,
       required: true,
     },
