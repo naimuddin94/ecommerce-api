@@ -85,9 +85,25 @@ const updateProduct = asyncHandler(async (req: Request, res: Response) => {
     .json(new ApiResponse(200, result, 'Product updated successfully!'));
 });
 
+// Product delete functionality
+const deleteProduct = asyncHandler(async (req: Request, res: Response) => {
+  const { productId } = req.params;
+
+  const result = await productService.deleteProductFromDB(productId);
+
+  if (!result) {
+    throw new ApiError(500, 'Something went wrong while deleting product');
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, 'Product deleted successfully!'));
+});
+
 export const productController = {
   createProduct,
   singleProduct,
   allProducts,
   updateProduct,
+  deleteProduct,
 };

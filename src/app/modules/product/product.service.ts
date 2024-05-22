@@ -49,9 +49,21 @@ const updateProductToDB = async (
   return await Product.findByIdAndUpdate(id, updateProductData, { new: true });
 };
 
+// Delete product by id from database
+const deleteProductFromDB = async (id: string) => {
+  const product = await Product.findById(id);
+
+  if (!product) {
+    throw new ApiError(404, 'Invalid product id');
+  }
+  
+  return await Product.findByIdAndDelete(id);
+};
+
 export const productService = {
   saveProductToDB,
   fetchSingleProductFromDB,
   fetchAllProductFromDB,
   updateProductToDB,
+  deleteProductFromDB,
 };

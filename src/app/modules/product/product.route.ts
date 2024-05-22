@@ -11,6 +11,7 @@ router
 router
   .route('/:productId')
   .get(productController.singleProduct)
-  .put(productController.updateProduct);
+  .put(productController.updateProduct)
+  .delete(productController.deleteProduct);
 
 export const productRouter = router;
